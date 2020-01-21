@@ -18,6 +18,7 @@ class Graph:
     def add_edge(self, v1, v2):
         """
         Add a directed edge to the graph.
+        If both exist, add a connection from v1 to v2.
         """
         if v1 in self.vertices and v2 in self.vertices:
             self.vertices[v1].add(v2)
@@ -79,14 +80,21 @@ class Graph:
                     s.push(neighbor)
 
 
-    def dft_recursive(self, starting_vertex):
+    def dft_recursive(self, starting_vertex, visited=None):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
 
         This should be done using recursion.
         """
-        pass  # TODO
+        if visited is None:
+            visited = set()
+        
+        visited.add(starting_vertex)
+        print(starting_vertex)
+        for child_vert in self.vertices[starting_vertex]:
+            if child_vert not in visited:
+                self.dft_recursive(child_vert, visited)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -153,7 +161,7 @@ class Graph:
                         s.push(path)
 
 
-    def dfs_recursive(self, starting_vertex):
+    def dfs_recursive(self, starting_vertex, destination_vertex, visited=None, path=None):
         """
         Return a list containing a path from
         starting_vertex to destination_vertex in
@@ -161,7 +169,28 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        if visited == None:
+            visited = set()
+
+        visited.add(starting_vertex)
+
+        if path == None:
+            path = []
+        
+        path += [starting_vertex]
+
+        if starting_vertex == destination_vertex:
+            return path
+        
+        for neighbor in self.vertices[starting_vertex]:
+            if neighbor not in visited:
+                new_path = self.dfs_recursive(neighbor, destination_vertex, visited, path)
+                print("!!!", new_path)
+                if new_path is not None:
+                    return new_path
+
+        return None
+            
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -229,4 +258,4 @@ if __name__ == '__main__':
         [1, 2, 4, 7, 6]
     '''
     print(graph.dfs(1, 6))
-    # print(graph.dfs_recursive(1, 6))
+    print(graph.dfs_recursive(1, 6))
