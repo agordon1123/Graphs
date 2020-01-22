@@ -122,7 +122,7 @@ class Graph:
         while q.size() > 0:
             v = q.dequeue()
 
-            last = v[len(v) - 1]
+            last = v[-1]
 
             if last not in visited:
                 if last == destination_vertex:
@@ -148,7 +148,7 @@ class Graph:
         while s.size() > 0:
             v = s.pop()
 
-            last = v[len(v) - 1]
+            last = v[-1]
 
             if last not in visited:
                 if last == destination_vertex:
