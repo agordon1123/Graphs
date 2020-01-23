@@ -1,3 +1,10 @@
+
+from util import Queue
+
+from itertools import permutations
+import random
+
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -44,10 +51,125 @@ class SocialGraph:
         self.friendships = {}
         # !!!! IMPLEMENT ME
 
-        # Add users
+        temp = []
+        # add users to graph with name as int
+        for i in range(num_users):
+            self.add_user(i)
+            temp.append(i+1)
+        
+        # generate all possible permutations
+        perm = permutations(temp, 2)
 
-        # Create friendships
+        # add to list 
+        possibilities = []
+        for i in list(perm):
+            possibilities.append(i)
+        
+        random.shuffle(possibilities)
 
+        # grab n tuples
+        # possibilities = possibilities[:avg_friendships * len(self.users)]
+
+        # different method to generate
+        for user_id in self.users:
+            iterable = avg_friendships
+            while iterable > 0:
+                self.add_friendship(user_id, random.randint(user_id, len(self.users)))
+                iterable -= 1
+
+
+        # create friendships
+        # TODO: not optimal -> 10 receives none and the rest rest receive double
+        #         if possibilities[target][0] == i+1:
+
+        #             # target user has friends
+        #             if self.friendships.get(target):
+        #                 # friendship does not already exist
+        #                 if i+1 not in self.friendships.get(target):                            
+        #                     # add as friend with whichever num bigger
+        #                     if possibilities[target][0] > possibilities[target][1]:
+        #                         self.add_friendship(possibilities[target][0], possibilities[target][1])
+        #                         amount -= 1
+        #                     else: 
+        #                         self.add_friendship(possibilities[target][1], possibilities[target][0])
+        #                         amount -= 1
+        #                 else:
+        #                     # iterate
+        #                     target += 1
+                    
+        #             else:
+        #                 # add as friend with whichever num bigger
+        #                 if possibilities[target][0] > possibilities[target][1]:
+        #                     self.add_friendship(possibilities[target][0], possibilities[target][1])
+        #                     amount -= 1
+        #                 else: 
+        #                     self.add_friendship(possibilities[target][1], possibilities[target][0])
+        #                     amount -= 1
+                    
+        #         else:
+        #             # iterate
+        #             target += 1
+
+
+            
+
+
+
+            # if self.friendships.get(i[0]):
+            #     # friendship does not already exist
+            #     if i[1] not in self.friendships.get(i[0]):
+            #         if i[0] > i[1]:
+            #             self.add_friendship(i[0], i[1])
+            #         else: 
+            #             self.add_friendship(i[1], i[0])
+            # else:
+            #     if i[0] > i[1]:
+            #         self.add_friendship(i[0], i[1])
+            #     else: 
+            #         self.add_friendship(i[1], i[0])
+
+        # -------------
+
+        # # create friendships
+        # for i in range(len(temp)):
+        #     print(i)
+        #     # randomly choose n amount of friendships
+        #     mid = avg_friendships // 2
+        #     # calculate num of friendships around average given
+        #     amount = random.randint(avg_friendships - mid, avg_friendships + mid)
+        #     target = int(i)
+        #     print(amount)
+        #     while amount > 0:
+        #         if possibilities[target][0] == i+1:
+
+        #             # target user has friends
+        #             if self.friendships.get(target):
+        #                 # friendship does not already exist
+        #                 if i+1 not in self.friendships.get(target):                            
+        #                     # add as friend with whichever num bigger
+        #                     if possibilities[target][0] > possibilities[target][1]:
+        #                         self.add_friendship(possibilities[target][0], possibilities[target][1])
+        #                         amount -= 1
+        #                     else: 
+        #                         self.add_friendship(possibilities[target][1], possibilities[target][0])
+        #                         amount -= 1
+        #                 else:
+        #                     # iterate
+        #                     target += 1
+                    
+        #             else:
+        #                 # add as friend with whichever num bigger
+        #                 if possibilities[target][0] > possibilities[target][1]:
+        #                     self.add_friendship(possibilities[target][0], possibilities[target][1])
+        #                     amount -= 1
+        #                 else: 
+        #                     self.add_friendship(possibilities[target][1], possibilities[target][0])
+        #                     amount -= 1
+                    
+        #         else:
+        #             # iterate
+        #             target += 1
+        
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
@@ -59,6 +181,25 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+
+        q = Queue()
+        path = []
+        # initialize path with starting node
+        q.enqueue([user_id])
+
+        # perform bfs on each conected node
+        while q.size() > 0:
+            path = q.dequeue()
+            last = path[-1]
+            if last not in visited:
+                visited[last] = path
+                # perform bfs on all connected nodes
+                for v in self.friendships[last]:
+                    if v not in visited:
+                        new_path = list(path)
+                        new_path.append(v)
+                        q.enqueue(new_path)
+
         return visited
 
 
