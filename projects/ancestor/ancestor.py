@@ -84,8 +84,10 @@ def earliest_ancestor(ancestors, starting_node):
         if g.vertices[x]:
             for vert in g.vertices[x]:
                 s.push(vert)
+        # no ancestors to starting_node
         elif x == starting_node:
            return -1
+        # reached the oldest ancestor for a path
         else:
             outer.append(path)
             path = path[:len(outer)]
