@@ -1,3 +1,10 @@
+
+from util import Queue
+
+# from itertools import permutations
+import random
+
+
 class User:
     def __init__(self, name):
         self.name = name
@@ -14,11 +21,14 @@ class SocialGraph:
         """
         if user_id == friend_id:
             print("WARNING: You cannot be friends with yourself")
+            return False
         elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
             print("WARNING: Friendship already exists")
+            return False
         else:
             self.friendships[user_id].add(friend_id)
             self.friendships[friend_id].add(user_id)
+            return True
 
     def add_user(self, name):
         """
@@ -44,10 +54,43 @@ class SocialGraph:
         self.friendships = {}
         # !!!! IMPLEMENT ME
 
-        # Add users
+        temp = []
+        # add users to graph with name as int
+        for i in range(num_users):
+            self.add_user(i)
+            temp.append(i+1)
+        
+        # generate all possible permutations
+        # perm = permutations(temp, 2)
 
-        # Create friendships
+        # add to list if i[1] is larger to avoid duplicate friendships
+        # possibilities = []
+        # for i in list(perm):
+        #     if i[0] < i[1]:
+        #         possibilities.append(i)
+        
+        # grab n tuples
+        # random.shuffle(possibilities)
+        # possibilities = possibilities[:avg_friendships * len(self.users) // 2]
 
+        # create friendships
+        # different method to generate
+        # for i in range(len(self.users)):
+        #     self.add_friendship(possibilities[i][0], possibilities[i][1])
+
+        # create friendships -> solution
+        target_friendships = (num_users * avg_friendships)
+        total_friendships = 0
+        collisions = 0
+        while total_friendships < target_friendships:
+            # create random friendship
+            user_id = random.randint(1, self.last_id)
+            friend_id = random.randint(1, self.last_id)
+            if self.add_friendship(user_id, friend_id):
+                total_friendships += 2
+            else:
+                collisions += 1
+        
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
@@ -59,6 +102,25 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+
+        q = Queue()
+        path = []
+        # initialize path with starting node
+        q.enqueue([user_id])
+
+        while q.size() > 0:
+            # pop out last visited in connected component
+            path = q.dequeue()
+            last = path[-1]
+            if last not in visited:
+                visited[last] = path
+                # perform bfs on all connected nodes
+                for v in self.friendships[last]:
+                    if v not in visited:
+                        new_path = list(path)
+                        new_path.append(v)
+                        q.enqueue(new_path)
+
         return visited
 
 
